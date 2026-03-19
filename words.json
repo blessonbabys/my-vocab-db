@@ -14,5 +14,9 @@
   {
     "eng": "Name",
     "lat": "Vards"
+  },
+  {
+    "eng": "Surname",
+    "lat": "Uzvards"
   }
 ]
