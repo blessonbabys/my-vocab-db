@@ -3,93 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Latvian Pro</title>
+    <title>Latvian Pro Sync</title>
     <style>
         :root { --bg: #0d1117; --card: #161b22; --text: #c9d1d9; --accent: #58a6ff; --sec: #3fb950; }
-        body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; min-height: 100vh; }
-        #app { width: 100%; max-width: 450px; text-align: center; }
+        body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; min-height: 100vh; align-items: center; }
+        #app { width: 100%; max-width: 400px; text-align: center; }
         .screen { display: none; animation: fadeIn 0.3s; }
         .active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         
-        .btn { background: var(--card); border: 1px solid #30363d; color: var(--accent); padding: 16px; border-radius: 12px; width: 100%; font-size: 1rem; margin-bottom: 12px; cursor: pointer; font-weight: 600; }
-        .btn:active { transform: scale(0.98); opacity: 0.8; }
-        .btn-sec { color: var(--sec); }
-        .btn-dim { color: #8b949e; }
+        .btn { background: var(--card); border: 1px solid #30363d; color: var(--accent); padding: 18px; border-radius: 12px; width: 100%; font-size: 1.1rem; margin-bottom: 12px; cursor: pointer; font-weight: 600; transition: 0.2s; }
+        .btn:active { transform: scale(0.97); background: #1c2128; }
+        .btn-sec { color: var(--sec); border-color: #30363d; }
+        .btn-dim { color: #8b949e; font-size: 0.9rem; padding: 12px; }
         
-        input { width: 100%; padding: 16px; margin-bottom: 12px; border-radius: 10px; border: 1px solid #30363d; background: #010409; color: white; box-sizing: border-box; font-size: 1rem; }
+        input { width: 100%; padding: 16px; margin-bottom: 12px; border-radius: 10px; border: 1px solid #30363d; background: #010409; color: white; font-size: 1rem; outline: none; box-sizing: border-box; }
         
-        .flashcard { background: var(--card); padding: 50px 20px; border-radius: 25px; min-height: 200px; display: flex; flex-direction: column; justify-content: center; margin: 20px 0; border: 1px solid #30363d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .word { font-size: 2.2rem; font-weight: bold; }
-        .translation { font-size: 1.8rem; color: var(--sec); margin-top: 15px; min-height: 40px; }
+        .flashcard { background: var(--card); padding: 50px 20px; border-radius: 25px; min-height: 220px; display: flex; flex-direction: column; justify-content: center; margin: 20px 0; border: 1px solid #30363d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .word { font-size: 2.2rem; font-weight: bold; margin-bottom: 10px; }
+        .translation { font-size: 1.8rem; color: var(--sec); min-height: 40px; font-weight: 500; }
+        .counter { font-size: 0.9rem; color: #8b949e; margin-bottom: 10px; font-family: monospace; }
+        .lang-hint { font-size: 0.7rem; color: #58a6ff; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; }
         
-        .list-container { text-align: left; background: var(--card); border-radius: 15px; margin-top: 20px; border: 1px solid #30363d; }
+        /* List Styles */
+        .list-container { text-align: left; background: var(--card); border-radius: 15px; margin: 20px 0; border: 1px solid #30363d; max-height: 400px; overflow-y: auto; }
         .list-item { padding: 12px 15px; border-bottom: 1px solid #30363d; display: flex; justify-content: space-between; font-size: 0.9rem; }
-        .list-item:last-child { border: none; }
-        
-        .pagination { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; }
-        .page-btn { padding: 8px 15px; background: #21262d; border: 1px solid #30363d; color: white; border-radius: 6px; cursor: pointer; }
+        .pagination { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .page-btn { padding: 8px 12px; background: #21262d; border: 1px solid #30363d; color: white; border-radius: 6px; cursor: pointer; }
         .page-btn:disabled { opacity: 0.3; }
 
-        .back { color: #8b949e; text-decoration: none; display: block; margin-top: 25px; font-size: 0.85rem; }
+        .back { color: #8b949e; text-decoration: none; display: block; margin-top: 25px; font-size: 0.9rem; }
     </style>
 </head>
 <body>
 
 <div id="app">
     <div id="menu" class="screen active">
-        <h1 style="font-weight:200; margin-bottom:30px;">Vārdnīca</h1>
+        <h1 style="color:white; font-weight:200; margin-bottom:40px;">Latvian Pro</h1>
         <button class="btn" onclick="checkAuth('add')">Add New Words</button>
-        <button class="btn btn-dim" onclick="checkAuth('list')">View All Words</button>
-        <button class="btn btn-sec" onclick="startPractice('all')">Revise All</button>
-        <button class="btn btn-sec" onclick="startPractice(50)">Random 50</button>
-        <div id="status" style="margin-top:20px; font-size:0.75rem; color:#444;">Syncing...</div>
+        <button class="btn btn-dim" onclick="checkAuth('view')">View All Words</button>
+        <button class="btn btn-sec" onclick="prepareSession('all')">Revise All Words</button>
+        <button class="btn btn-sec" onclick="prepareSession(50)">Random 50 Words</button>
+        <div id="status" style="margin-top:20px; font-size:0.8rem; color:#444;">Syncing with GitHub...</div>
     </div>
 
     <div id="add" class="screen">
-        <h3>Cloud Sync</h3>
-        <input type="password" id="gh-token-manual" placeholder="Paste GitHub Token">
+        <h3>Database Update</h3>
+        <input type="password" id="gh-token" placeholder="GitHub Token (Saved locally)">
         <hr style="border:0; border-top:1px solid #333; margin:20px 0;">
         <input type="text" id="eng" placeholder="English Word" autocomplete="off">
         <input type="text" id="lat" placeholder="Latvian Word" autocomplete="off">
-        <button class="btn" id="saveBtn" onclick="saveToGitHub()">Upload to GitHub</button>
-        <a href="#" class="back" onclick="location.reload()">← Back & Sync</a>
+        <button class="btn" id="saveBtn" onclick="saveToGitHub()">Upload to Cloud</button>
+        <a href="#" class="back" onclick="location.reload()">← Back & Refresh</a>
     </div>
 
-    <div id="list" class="screen">
-        <h3>Dictionary List</h3>
-        <div id="words-list" class="list-container"></div>
+    <div id="view" class="screen">
+        <h3>My Dictionary</h3>
+        <div id="list-target" class="list-container"></div>
         <div class="pagination">
-            <button class="page-btn" id="prevPage" onclick="changePage(-1)">← Prev</button>
-            <span id="pageInfo" style="font-size: 0.8rem; color: #8b949e;">Page 1</span>
-            <button class="page-btn" id="nextPage" onclick="changePage(1)">Next →</button>
+            <button class="page-btn" id="prevBtn" onclick="changePage(-1)">Prev</button>
+            <span id="pageMeta" style="font-size:0.8rem;"></span>
+            <button class="page-btn" id="nextBtn" onclick="changePage(1)">Next</button>
         </div>
-        <a href="#" class="back" onclick="show('menu')">← Back</a>
+        <a href="#" class="back" onclick="show('menu')">← Back to Menu</a>
     </div>
 
     <div id="practice" class="screen">
-        <div id="count" style="font-size: 0.8rem; color: #8b949e;">0 / 0</div>
+        <div id="count" class="counter">0 / 0</div>
         <div class="flashcard">
-            <div id="dir-hint" style="font-size:0.7rem; color:#58a6ff; text-transform:uppercase; margin-bottom:10px;"></div>
+            <div id="dir-hint" class="lang-hint"></div>
             <div id="q-word" class="word">...</div>
             <div id="a-word" class="translation"></div>
         </div>
-        <button id="rev-btn" class="btn" onclick="reveal()">Reveal</button>
-        <button id="next-btn" class="btn btn-sec" style="display:none" onclick="nextCard()">Next</button>
-        <a href="#" class="back" onclick="show('menu')">Stop</a>
+        <button id="rev-btn" class="btn" onclick="reveal()">Reveal Answer</button>
+        <button id="next-btn" class="btn btn-sec" style="display:none" onclick="nextCard()">Next Word</button>
+        <a href="#" class="back" onclick="show('menu')">Stop Session</a>
+    </div>
+
+    <div id="done" class="screen">
+        <div class="flashcard">
+            <h2 style="color: var(--sec);">Pabeigts! 🎉</h2>
+            <p>Session Complete.</p>
+        </div>
+        <button class="btn" onclick="show('menu')">Home</button>
     </div>
 </div>
 
 <script>
     const REPO = "blessonbabys/my-vocab-db";
     const FILE = "words.json";
-    const SECRET_PW = "latvian123"; 
+    const PASS = "latvian123";
     
     let words = [], session = [], idx = 0, currentSha = "";
     let currentPage = 1;
-    const itemsPerPage = 100;
+    const perPage = 100;
 
-    window.onload = loadFromGitHub;
+    window.onload = () => {
+        const savedToken = localStorage.getItem('v_token');
+        if(savedToken) document.getElementById('gh-token').value = savedToken;
+        loadFromGitHub();
+    };
 
     async function loadFromGitHub() {
         try {
@@ -97,16 +110,17 @@
             const data = await res.json();
             currentSha = data.sha;
             words = JSON.parse(decodeURIComponent(escape(atob(data.content))));
-            document.getElementById('status').innerText = `${words.length} words found`;
-        } catch(e) { document.getElementById('status').innerText = "Database Offline"; }
+            document.getElementById('status').innerText = `Database: ${words.length} words synced`;
+        } catch(e) {
+            document.getElementById('status').innerText = "Empty Database - Add words to start";
+        }
     }
 
     function checkAuth(target) {
-        const pw = prompt("Enter Access Password:");
-        if (pw === SECRET_PW) {
-            if (target === 'list') { currentPage = 1; renderList(); }
+        if(prompt("Enter password:") === PASS) {
+            if(target === 'view') { currentPage = 1; renderList(); }
             show(target);
-        } else { alert("Wrong Password"); }
+        } else { alert("Wrong password"); }
     }
 
     function show(id) {
@@ -114,40 +128,45 @@
         document.getElementById(id).classList.add('active');
     }
 
+    // --- LIST LOGIC ---
     function renderList() {
-        const container = document.getElementById('words-list');
+        const container = document.getElementById('list-target');
         container.innerHTML = "";
-        const start = (currentPage - 1) * itemsPerPage;
-        const end = start + itemsPerPage;
-        const paginated = words.slice().reverse().slice(start, end);
+        const start = (currentPage - 1) * perPage;
+        const end = start + perPage;
+        const pageData = words.slice().reverse().slice(start, end); // Newest first
 
-        paginated.forEach(item => {
+        pageData.forEach(item => {
             const div = document.createElement('div');
             div.className = "list-item";
             div.innerHTML = `<span>${item.eng}</span><span style="color:var(--sec)">${item.lat}</span>`;
             container.appendChild(div);
         });
 
-        document.getElementById('pageInfo').innerText = `Page ${currentPage} of ${Math.ceil(words.length / itemsPerPage) || 1}`;
-        document.getElementById('prevPage').disabled = currentPage === 1;
-        document.getElementById('nextPage').disabled = end >= words.length;
+        document.getElementById('pageMeta').innerText = `Page ${currentPage} of ${Math.ceil(words.length/perPage) || 1}`;
+        document.getElementById('prevBtn').disabled = currentPage === 1;
+        document.getElementById('nextBtn').disabled = end >= words.length;
     }
 
-    function changePage(step) {
-        currentPage += step;
+    function changePage(dir) {
+        currentPage += dir;
         renderList();
     }
 
+    // --- SAVE LOGIC ---
     async function saveToGitHub() {
-        const token = document.getElementById('gh-token-manual').value.trim();
+        const token = document.getElementById('gh-token').value.trim();
         const eng = document.getElementById('eng').value.trim();
         const lat = document.getElementById('lat').value.trim();
+        
         if(!token || !eng || !lat) return alert("Fill all fields");
+        localStorage.setItem('v_token', token);
 
         const btn = document.getElementById('saveBtn');
-        btn.innerText = "Saving..."; btn.disabled = true;
+        btn.innerText = "Uploading..."; btn.disabled = true;
 
         const updated = [...words, { eng, lat }];
+
         try {
             const content = btoa(unescape(encodeURIComponent(JSON.stringify(updated, null, 2))));
             const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${FILE}`, {
@@ -155,39 +174,45 @@
                 headers: { "Authorization": `token ${token}`, "Content-Type": "application/json" },
                 body: JSON.stringify({ message: "Add word", content: content, sha: currentSha })
             });
-            if(!res.ok) throw new Error("Check Token/Permission");
+
+            if(!res.ok) throw new Error("GitHub Error. Check token.");
+
             const resData = await res.json();
             currentSha = resData.content.sha;
             words = updated;
+
             document.getElementById('eng').value = "";
             document.getElementById('lat').value = "";
-            btn.innerText = "Success!";
-            setTimeout(() => btn.innerText = "Upload to GitHub", 2000);
-        } catch(e) { alert(e.message); } 
-        finally { btn.disabled = false; }
+            btn.innerText = "Word Saved!";
+            setTimeout(() => btn.innerText = "Upload to Cloud", 2000);
+        } catch(e) { alert(e.message); } finally { btn.disabled = false; }
     }
 
-    function startPractice(mode) {
-        if(words.length === 0) return alert("No words!");
+    // --- PRACTICE LOGIC ---
+    function prepareSession(limit) {
+        if(words.length === 0) return alert("No words to revise!");
         session = [...words].sort(() => 0.5 - Math.random());
-        if(mode === 50) session = session.slice(0, 50);
-        idx = 0; show('practice'); renderCard();
+        if(limit === 50) session = session.slice(0, 50);
+        idx = 0;
+        show('practice');
+        renderCard();
     }
 
     function renderCard() {
         const item = session[idx];
-        const isEng = Math.random() > 0.5;
+        const isEngPrompt = Math.random() > 0.5;
         document.getElementById('count').innerText = `${idx + 1} / ${session.length}`;
-        document.getElementById('dir-hint').innerText = isEng ? "English → Latvian" : "Latvian → English";
-        document.getElementById('q-word').innerText = isEng ? item.eng : item.lat;
+        document.getElementById('dir-hint').innerText = isEngPrompt ? "English → Latvian" : "Latvian → English";
+        document.getElementById('q-word').innerText = isEngPrompt ? item.eng : item.lat;
         document.getElementById('a-word').innerText = "";
-        document.getElementById('a-word').dataset.ans = isEng ? item.lat : item.eng;
+        document.getElementById('a-word').dataset.answer = isEngPrompt ? item.lat : item.eng;
         document.getElementById('rev-btn').style.display = "block";
         document.getElementById('next-btn').style.display = "none";
     }
 
     function reveal() {
-        document.getElementById('a-word').innerText = document.getElementById('a-word').dataset.ans;
+        const el = document.getElementById('a-word');
+        el.innerText = el.dataset.answer;
         document.getElementById('rev-btn').style.display = "none";
         document.getElementById('next-btn').style.display = "block";
     }
@@ -195,7 +220,7 @@
     function nextCard() {
         idx++;
         if(idx < session.length) renderCard();
-        else { alert("Finish!"); show('menu'); }
+        else show('done');
     }
 </script>
 </body>
