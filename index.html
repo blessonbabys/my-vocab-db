@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Latvian Pro Sync</title>
     <style>
-        :root { --bg: #0d1117; --card: #161b22; --text: #c9d1d9; --accent: #58a6ff; --sec: #3fb950; }
+        :root { --bg: #0d1117; --card: #161b22; --text: #c9d1d9; --accent: #58a6ff; --sec: #3fb950; --err: #f85149; }
         body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; min-height: 100vh; align-items: center; }
         #app { width: 100%; max-width: 400px; text-align: center; }
         .screen { display: none; animation: fadeIn 0.3s; }
@@ -26,8 +26,10 @@
         .lang-hint { font-size: 0.7rem; color: #58a6ff; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; }
         
         /* List Styles */
-        .list-container { text-align: left; background: var(--card); border-radius: 15px; margin: 20px 0; border: 1px solid #30363d; max-height: 400px; overflow-y: auto; }
-        .list-item { padding: 12px 15px; border-bottom: 1px solid #30363d; display: flex; justify-content: space-between; font-size: 0.9rem; }
+        .list-container { text-align: left; background: var(--card); border-radius: 15px; margin: 20px 0; border: 1px solid #30363d; max-height: 450px; overflow-y: auto; }
+        .list-item { padding: 12px 15px; border-bottom: 1px solid #30363d; display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; }
+        .delete-btn { color: var(--err); background: none; border: 1px solid #442222; padding: 5px 10px; border-radius: 6px; font-size: 0.7rem; cursor: pointer; }
+        
         .pagination { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .page-btn { padding: 8px 12px; background: #21262d; border: 1px solid #30363d; color: white; border-radius: 6px; cursor: pointer; }
         .page-btn:disabled { opacity: 0.3; }
@@ -40,16 +42,16 @@
 <div id="app">
     <div id="menu" class="screen active">
         <h1 style="color:white; font-weight:200; margin-bottom:40px;">Latvian Pro</h1>
-        <button class="btn" onclick="checkAuth('add')">Add New Words</button>
-        <button class="btn btn-dim" onclick="checkAuth('view')">View All Words</button>
+        <button class="btn" onclick="show('add')">Add New Words</button>
+        <button class="btn btn-dim" onclick="openListView()">View All Words</button>
         <button class="btn btn-sec" onclick="prepareSession('all')">Revise All Words</button>
         <button class="btn btn-sec" onclick="prepareSession(50)">Random 50 Words</button>
-        <div id="status" style="margin-top:20px; font-size:0.8rem; color:#444;">Syncing with GitHub...</div>
+        <div id="status" style="margin-top:20px; font-size:0.8rem; color:#444;">Syncing...</div>
     </div>
 
     <div id="add" class="screen">
         <h3>Database Update</h3>
-        <input type="password" id="gh-token" placeholder="GitHub Token (Saved locally)">
+        <input type="password" id="gh-token" placeholder="GitHub Token (Saved locally)" class="token-input">
         <hr style="border:0; border-top:1px solid #333; margin:20px 0;">
         <input type="text" id="eng" placeholder="English Word" autocomplete="off">
         <input type="text" id="lat" placeholder="Latvian Word" autocomplete="off">
@@ -58,7 +60,8 @@
     </div>
 
     <div id="view" class="screen">
-        <h3>My Dictionary</h3>
+        <h3>Manage Dictionary</h3>
+        <input type="password" id="gh-token-list" placeholder="Paste Token to Delete" style="font-size: 0.8rem; padding: 10px;">
         <div id="list-target" class="list-container"></div>
         <div class="pagination">
             <button class="page-btn" id="prevBtn" onclick="changePage(-1)">Prev</button>
@@ -92,7 +95,6 @@
 <script>
     const REPO = "blessonbabys/my-vocab-db";
     const FILE = "words.json";
-    const PASS = "latvian123";
     
     let words = [], session = [], idx = 0, currentSha = "";
     let currentPage = 1;
@@ -100,7 +102,10 @@
 
     window.onload = () => {
         const savedToken = localStorage.getItem('v_token');
-        if(savedToken) document.getElementById('gh-token').value = savedToken;
+        if(savedToken) {
+            document.getElementById('gh-token').value = savedToken;
+            document.getElementById('gh-token-list').value = savedToken;
+        }
         loadFromGitHub();
     };
 
@@ -116,30 +121,38 @@
         }
     }
 
-    function checkAuth(target) {
-        if(prompt("Enter password:") === PASS) {
-            if(target === 'view') { currentPage = 1; renderList(); }
-            show(target);
-        } else { alert("Wrong password"); }
-    }
-
     function show(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
     }
 
-    // --- LIST LOGIC ---
+    function openListView() {
+        currentPage = 1;
+        renderList();
+        show('view');
+    }
+
+    // --- LIST & DELETE LOGIC ---
     function renderList() {
         const container = document.getElementById('list-target');
         container.innerHTML = "";
         const start = (currentPage - 1) * perPage;
         const end = start + perPage;
-        const pageData = words.slice().reverse().slice(start, end); // Newest first
+        
+        // We create a copy with the original index so we can delete correctly
+        const indexedWords = words.map((item, index) => ({...item, originalIndex: index}));
+        const pageData = indexedWords.slice().reverse().slice(start, end);
 
         pageData.forEach(item => {
             const div = document.createElement('div');
             div.className = "list-item";
-            div.innerHTML = `<span>${item.eng}</span><span style="color:var(--sec)">${item.lat}</span>`;
+            div.innerHTML = `
+                <div style="flex:1">
+                    <div style="color:white">${item.eng}</div>
+                    <div style="color:var(--sec); font-size:0.8rem">${item.lat}</div>
+                </div>
+                <button class="delete-btn" onclick="deleteWord(${item.originalIndex})">Delete</button>
+            `;
             container.appendChild(div);
         });
 
@@ -153,39 +166,54 @@
         renderList();
     }
 
-    // --- SAVE LOGIC ---
-    async function saveToGitHub() {
-        const token = document.getElementById('gh-token').value.trim();
-        const eng = document.getElementById('eng').value.trim();
-        const lat = document.getElementById('lat').value.trim();
-        
-        if(!token || !eng || !lat) return alert("Fill all fields");
-        localStorage.setItem('v_token', token);
+    async function deleteWord(index) {
+        const token = document.getElementById('gh-token-list').value.trim();
+        if(!token) return alert("Paste your token into the box above to delete.");
+        if(!confirm(`Delete "${words[index].eng}"?`)) return;
 
-        const btn = document.getElementById('saveBtn');
-        btn.innerText = "Uploading..."; btn.disabled = true;
+        const updated = words.filter((_, i) => i !== index);
+        await syncToGitHub(updated, token, "Delete word");
+    }
 
-        const updated = [...words, { eng, lat }];
-
+    // --- SHARED SYNC FUNCTION ---
+    async function syncToGitHub(newArray, token, msg) {
         try {
-            const content = btoa(unescape(encodeURIComponent(JSON.stringify(updated, null, 2))));
+            localStorage.setItem('v_token', token);
+            const content = btoa(unescape(encodeURIComponent(JSON.stringify(newArray, null, 2))));
             const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${FILE}`, {
                 method: "PUT",
                 headers: { "Authorization": `token ${token}`, "Content-Type": "application/json" },
-                body: JSON.stringify({ message: "Add word", content: content, sha: currentSha })
+                body: JSON.stringify({ message: msg, content: content, sha: currentSha })
             });
 
             if(!res.ok) throw new Error("GitHub Error. Check token.");
 
             const resData = await res.json();
             currentSha = resData.content.sha;
-            words = updated;
+            words = newArray;
+            renderList();
+            document.getElementById('status').innerText = `Database: ${words.length} words synced`;
+            alert("Updated successfully!");
+        } catch(e) { alert(e.message); }
+    }
 
-            document.getElementById('eng').value = "";
-            document.getElementById('lat').value = "";
-            btn.innerText = "Word Saved!";
-            setTimeout(() => btn.innerText = "Upload to Cloud", 2000);
-        } catch(e) { alert(e.message); } finally { btn.disabled = false; }
+    // --- SAVE NEW WORD LOGIC ---
+    async function saveToGitHub() {
+        const token = document.getElementById('gh-token').value.trim();
+        const eng = document.getElementById('eng').value.trim();
+        const lat = document.getElementById('lat').value.trim();
+        
+        if(!token || !eng || !lat) return alert("Fill all fields");
+        const btn = document.getElementById('saveBtn');
+        btn.innerText = "Uploading..."; btn.disabled = true;
+
+        const updated = [...words, { eng, lat }];
+        await syncToGitHub(updated, token, "Add word");
+        
+        document.getElementById('eng').value = "";
+        document.getElementById('lat').value = "";
+        btn.innerText = "Upload to Cloud";
+        btn.disabled = false;
     }
 
     // --- PRACTICE LOGIC ---
