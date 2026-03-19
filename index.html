@@ -5,92 +5,82 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Latvian Pro Sync</title>
     <style>
-        :root { --bg: #0d1117; --card: #161b22; --text: #c9d1d9; --accent: #58a6ff; --sec: #3fb950; --err: #f85149; }
-        body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; min-height: 100vh; }
-        #app { width: 100%; max-width: 450px; text-align: center; }
+        :root { --bg: #0d1117; --card: #161b22; --text: #c9d1d9; --accent: #58a6ff; --sec: #3fb950; }
+        body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; min-height: 100vh; align-items: center; }
+        #app { width: 100%; max-width: 400px; text-align: center; }
         .screen { display: none; animation: fadeIn 0.3s; }
         .active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         
-        .btn { background: var(--card); border: 1px solid #30363d; color: var(--accent); padding: 16px; border-radius: 12px; width: 100%; font-size: 1rem; margin-bottom: 12px; cursor: pointer; font-weight: 600; }
-        .btn:active { transform: scale(0.98); background: #1c2128; }
-        .btn-sec { color: var(--sec); }
-        .btn-dim { color: #8b949e; border-color: #30363d; }
+        .btn { background: var(--card); border: 1px solid #30363d; color: var(--accent); padding: 18px; border-radius: 12px; width: 100%; font-size: 1.1rem; margin-bottom: 12px; cursor: pointer; font-weight: 600; transition: 0.2s; }
+        .btn:active { transform: scale(0.97); background: #1c2128; }
+        .btn-sec { color: var(--sec); border-color: #30363d; }
         
         input { width: 100%; padding: 16px; margin-bottom: 12px; border-radius: 10px; border: 1px solid #30363d; background: #010409; color: white; box-sizing: border-box; font-size: 1rem; outline: none; }
         
-        .flashcard { background: var(--card); padding: 50px 20px; border-radius: 25px; min-height: 200px; display: flex; flex-direction: column; justify-content: center; margin: 20px 0; border: 1px solid #30363d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .word { font-size: 2rem; font-weight: bold; }
-        .translation { font-size: 1.6rem; color: var(--sec); margin-top: 15px; min-height: 35px; }
+        .flashcard { background: var(--card); padding: 50px 20px; border-radius: 25px; min-height: 220px; display: flex; flex-direction: column; justify-content: center; margin: 20px 0; border: 1px solid #30363d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .word { font-size: 2.2rem; font-weight: bold; margin-bottom: 10px; }
+        .translation { font-size: 1.8rem; color: var(--sec); min-height: 40px; font-weight: 500; }
+        .counter { font-size: 0.9rem; color: #8b949e; margin-bottom: 10px; font-family: monospace; }
+        .lang-hint { font-size: 0.7rem; color: #58a6ff; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; }
         
-        .list-container { text-align: left; background: var(--card); border-radius: 15px; overflow: hidden; margin-top: 20px; border: 1px solid #30363d; }
-        .list-item { padding: 12px 15px; border-bottom: 1px solid #30363d; display: flex; justify-content: space-between; font-size: 0.9rem; }
-        .list-item:last-child { border: none; }
-        
-        .pagination { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; }
-        .page-btn { padding: 8px 15px; background: #21262d; border: 1px solid #30363d; color: white; border-radius: 6px; cursor: pointer; }
-        .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-
-        .back { color: #8b949e; text-decoration: none; display: block; margin-top: 25px; font-size: 0.85rem; }
+        .back { color: #8b949e; text-decoration: none; display: block; margin-top: 25px; font-size: 0.9rem; }
     </style>
 </head>
 <body>
 
 <div id="app">
     <div id="menu" class="screen active">
-        <h1 style="font-weight:200; margin-bottom:30px;">Vārdnīca</h1>
-        <button class="btn" onclick="checkAuth('add')">Add New Words</button>
-        <button class="btn btn-dim" onclick="checkAuth('list')">View All Words</button>
-        <button class="btn btn-sec" onclick="startPractice('all')">Revise All</button>
-        <button class="btn btn-sec" onclick="startPractice(50)">Random 50</button>
-        <div id="status" style="margin-top:20px; font-size:0.75rem; color:#444;">Connecting...</div>
+        <h1 style="color:white; font-weight:200; margin-bottom:40px;">Latvian Pro</h1>
+        <button class="btn" onclick="show('add')">Add New Words</button>
+        <button class="btn btn-sec" onclick="prepareSession('all')">Revise All Words</button>
+        <button class="btn btn-sec" onclick="prepareSession(50)">Random 50 Words</button>
+        <div id="status" style="margin-top:20px; font-size:0.8rem; color:#444;">Syncing with GitHub...</div>
     </div>
 
     <div id="add" class="screen">
-        <h3>Add Word</h3>
+        <h3>Database Update</h3>
+        <input type="password" id="gh-token" placeholder="GitHub Token (Saved locally)">
+        <hr style="border:0; border-top:1px solid #333; margin:20px 0;">
         <input type="text" id="eng" placeholder="English Word" autocomplete="off">
         <input type="text" id="lat" placeholder="Latvian Word" autocomplete="off">
-        <button class="btn" id="saveBtn" onclick="saveToGitHub()">Save to Cloud</button>
-        <a href="#" class="back" onclick="location.reload()">← Back & Sync</a>
-    </div>
-
-    <div id="list" class="screen">
-        <h3>My Dictionary</h3>
-        <div class="list-container" id="words-list"></div>
-        <div class="pagination">
-            <button class="page-btn" id="prevPage" onclick="changePage(-1)">← Prev</button>
-            <span id="pageInfo" style="font-size: 0.8rem; color: #8b949e;">Page 1</span>
-            <button class="page-btn" id="nextPage" onclick="changePage(1)">Next →</button>
-        </div>
-        <a href="#" class="back" onclick="show('menu')">← Back</a>
+        <button class="btn" id="saveBtn" onclick="saveToGitHub()">Upload to Cloud</button>
+        <a href="#" class="back" onclick="location.reload()">← Back & Refresh</a>
     </div>
 
     <div id="practice" class="screen">
-        <div id="count" style="font-size: 0.8rem; color: #8b949e;">0 / 0</div>
+        <div id="count" class="counter">0 / 0</div>
         <div class="flashcard">
-            <div id="dir-hint" style="font-size:0.7rem; color:#58a6ff; text-transform:uppercase; margin-bottom:10px;"></div>
+            <div id="dir-hint" class="lang-hint"></div>
             <div id="q-word" class="word">...</div>
             <div id="a-word" class="translation"></div>
         </div>
-        <button id="rev-btn" class="btn" onclick="reveal()">Reveal</button>
-        <button id="next-btn" class="btn btn-sec" style="display:none" onclick="nextCard()">Next</button>
-        <a href="#" class="back" onclick="show('menu')">Stop</a>
+        <button id="rev-btn" class="btn" onclick="reveal()">Reveal Answer</button>
+        <button id="next-btn" class="btn btn-sec" style="display:none" onclick="nextCard()">Next Word</button>
+        <a href="#" class="back" onclick="show('menu')">Stop Session</a>
+    </div>
+
+    <div id="done" class="screen">
+        <div class="flashcard">
+            <h2 style="color: var(--sec);">Pabeigts! 🎉</h2>
+            <p>Session Complete.</p>
+        </div>
+        <button class="btn" onclick="show('menu')">Home</button>
     </div>
 </div>
 
 <script>
-    // --- SETTINGS (HARDCODED) ---
-    const GITHUB_TOKEN = "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"; 
     const REPO = "blessonbabys/my-vocab-db";
     const FILE = "words.json";
-    const SECRET_PW = "latvian123"; // Password for Add/List
-    // ----------------------------
     
     let words = [], session = [], idx = 0, currentSha = "";
-    let currentPage = 1;
-    const itemsPerPage = 100;
 
-    window.onload = loadFromGitHub;
+    // Initialization
+    window.onload = () => {
+        const savedToken = localStorage.getItem('v_token');
+        if(savedToken) document.getElementById('gh-token').value = savedToken;
+        loadFromGitHub();
+    };
 
     async function loadFromGitHub() {
         try {
@@ -98,16 +88,10 @@
             const data = await res.json();
             currentSha = data.sha;
             words = JSON.parse(decodeURIComponent(escape(atob(data.content))));
-            document.getElementById('status').innerText = `${words.length} words in cloud`;
-        } catch(e) { document.getElementById('status').innerText = "Database Offline"; }
-    }
-
-    function checkAuth(target) {
-        const pw = prompt("Enter Password to access:");
-        if (pw === SECRET_PW) {
-            if (target === 'list') renderList();
-            show(target);
-        } else { alert("Incorrect Password"); }
+            document.getElementById('status').innerText = `Database: ${words.length} words synced`;
+        } catch(e) {
+            document.getElementById('status').innerText = "Empty Database - Add words to start";
+        }
     }
 
     function show(id) {
@@ -115,108 +99,74 @@
         document.getElementById(id).classList.add('active');
     }
 
-    // --- PAGINATION LOGIC ---
-    function renderList() {
-        const container = document.getElementById('words-list');
-        container.innerHTML = "";
+    async function saveToGitHub() {
+        const token = document.getElementById('gh-token').value.trim();
+        const eng = document.getElementById('eng').value.trim();
+        const lat = document.getElementById('lat').value.trim();
         
-        const start = (currentPage - 1) * itemsPerPage;
-        const end = start + itemsPerPage;
-        const paginatedItems = words.slice().reverse().slice(start, end); // Newest first
+        if(!token || !eng || !lat) return alert("Fill all fields");
+        localStorage.setItem('v_token', token);
 
-        paginatedItems.forEach(item => {
-            const div = document.createElement('div');
-            div.className = "list-item";
-            div.innerHTML = `<span>${item.eng}</span><span style="color:var(--sec)">${item.lat}</span>`;
-            container.appendChild(div);
-        });
+        const btn = document.getElementById('saveBtn');
+        btn.innerText = "Uploading..."; btn.disabled = true;
 
-        document.getElementById('pageInfo').innerText = `Page ${currentPage} of ${Math.ceil(words.length / itemsPerPage) || 1}`;
-        document.getElementById('prevPage').disabled = currentPage === 1;
-        document.getElementById('nextPage').disabled = end >= words.length;
+        const updated = [...words, { eng, lat }];
+
+        try {
+            const content = btoa(unescape(encodeURIComponent(JSON.stringify(updated, null, 2))));
+            const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${FILE}`, {
+                method: "PUT",
+                headers: { "Authorization": `token ${token}`, "Content-Type": "application/json" },
+                body: JSON.stringify({ message: "Add word", content: content, sha: currentSha })
+            });
+
+            if(!res.ok) throw new Error("GitHub rejected the request. Check token permissions.");
+
+            const resData = await res.json();
+            currentSha = resData.content.sha;
+            words = updated;
+
+            document.getElementById('eng').value = "";
+            document.getElementById('lat').value = "";
+            btn.innerText = "Word Saved!";
+            setTimeout(() => btn.innerText = "Upload to Cloud", 2000);
+        } catch(e) {
+            alert(e.message);
+        } finally { btn.disabled = false; }
     }
 
-    function changePage(step) {
-        currentPage += step;
-        renderList();
-    }
-
-    // --- CLOUD SAVE ---
-async function saveToGitHub() {
-    const eng = document.getElementById('eng').value.trim();
-    const lat = document.getElementById('lat').value.trim();
-    if(!eng || !lat) return alert("Fill both words");
-
-    const btn = document.getElementById('saveBtn');
-    btn.innerText = "Syncing..."; 
-    btn.disabled = true;
-
-    // Create the new list
-    const updated = [...words, { eng, lat }];
-
-    try {
-        // UTF-8 safe Base64 encoding
-        const jsonString = JSON.stringify(updated, null, 2);
-        const content = btoa(unescape(encodeURIComponent(jsonString)));
-
-        const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${FILE}`, {
-            method: "PUT",
-            headers: { 
-                "Authorization": `token ${GITHUB_TOKEN}`, 
-                "Accept": "application/vnd.github+json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ 
-                message: "Add word via Web App", 
-                content: content, 
-                sha: currentSha 
-            })
-        });
-
-        if(!res.ok) {
-            const errorBody = await res.json();
-            // This alert will tell us the EXACT reason (401, 403, 404, etc)
-            throw new Error(`GitHub Error ${res.status}: ${errorBody.message}`);
-        }
-
-        const resData = await res.json();
-        currentSha = resData.content.sha; // Crucial: Update SHA for the next save
-        words = updated;
+    function prepareSession(limit) {
+        if(words.length === 0) return alert("No words to revise!");
         
-        document.getElementById('eng').value = "";
-        document.getElementById('lat').value = "";
-        btn.innerText = "Saved!";
-        setTimeout(() => btn.innerText = "Save to Cloud", 2000);
-    } catch(e) { 
-        console.error(e);
-        alert(e.message); 
-    } finally { 
-        btn.disabled = false; 
-    }
-}
-
-    // --- REVISE LOGIC ---
-    function startPractice(mode) {
-        if(words.length === 0) return alert("No words!");
+        // 1. Shuffle all words
         session = [...words].sort(() => 0.5 - Math.random());
-        if(mode === 50) session = session.slice(0, 50);
-        idx = 0; show('practice'); renderCard();
+        
+        // 2. Limit to 50 if requested
+        if(limit === 50) session = session.slice(0, 50);
+        
+        idx = 0;
+        show('practice');
+        renderCard();
     }
 
     function renderCard() {
         const item = session[idx];
-        const isEng = Math.random() > 0.5;
+        const isEngPrompt = Math.random() > 0.5; // Random language choice
+        
         document.getElementById('count').innerText = `${idx + 1} / ${session.length}`;
-        document.getElementById('dir-hint').innerText = isEng ? "English → Latvian" : "Latvian → English";
-        document.getElementById('q-word').innerText = isEng ? item.eng : item.lat;
+        document.getElementById('dir-hint').innerText = isEngPrompt ? "English → Latvian" : "Latvian → English";
+        document.getElementById('q-word').innerText = isEngPrompt ? item.eng : item.lat;
+        
         document.getElementById('a-word').innerText = "";
-        document.getElementById('a-word').dataset.ans = isEng ? item.lat : item.eng;
+        document.getElementById('a-word').dataset.answer = isEngPrompt ? item.lat : item.eng;
+        
         document.getElementById('rev-btn').style.display = "block";
         document.getElementById('next-btn').style.display = "none";
     }
 
     function reveal() {
-        document.getElementById('a-word').innerText = document.getElementById('a-word').dataset.ans;
+        const el = document.getElementById('a-word');
+        el.innerText = el.dataset.answer;
         document.getElementById('rev-btn').style.display = "none";
         document.getElementById('next-btn').style.display = "block";
     }
@@ -224,7 +174,7 @@ async function saveToGitHub() {
     function nextCard() {
         idx++;
         if(idx < session.length) renderCard();
-        else { alert("Done!"); show('menu'); }
+        else show('done');
     }
 </script>
 </body>
