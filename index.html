@@ -11,13 +11,19 @@
         .screen { display: none; animation: fadeIn 0.3s; }
         .active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .btn { background: var(--card); border: 1px solid #30363d; color: var(--accent); padding: 18px; border-radius: 12px; width: 100%; font-size: 1.1rem; margin-bottom: 12px; cursor: pointer; font-weight: 600; }
+        
+        .btn { background: var(--card); border: 1px solid #30363d; color: var(--accent); padding: 18px; border-radius: 12px; width: 100%; font-size: 1.1rem; margin-bottom: 12px; cursor: pointer; font-weight: 600; transition: 0.2s; }
+        .btn:active { transform: scale(0.97); background: #1c2128; }
         .btn-sec { color: var(--sec); border-color: #30363d; }
+        
         input { width: 100%; padding: 16px; margin-bottom: 12px; border-radius: 10px; border: 1px solid #30363d; background: #010409; color: white; box-sizing: border-box; font-size: 1rem; outline: none; }
-        .flashcard { background: var(--card); padding: 50px 20px; border-radius: 20px; min-height: 220px; display: flex; flex-direction: column; justify-content: center; margin: 20px 0; border: 1px solid #30363d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .word { font-size: 2.2rem; font-weight: bold; }
-        .translation { font-size: 1.8rem; color: var(--sec); margin-top: 20px; min-height: 40px; }
+        
+        .flashcard { background: var(--card); padding: 50px 20px; border-radius: 25px; min-height: 220px; display: flex; flex-direction: column; justify-content: center; margin: 20px 0; border: 1px solid #30363d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .word { font-size: 2.2rem; font-weight: bold; margin-bottom: 10px; }
+        .translation { font-size: 1.8rem; color: var(--sec); min-height: 40px; font-weight: 500; }
         .counter { font-size: 0.9rem; color: #8b949e; margin-bottom: 10px; font-family: monospace; }
+        .lang-hint { font-size: 0.7rem; color: #58a6ff; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; }
+        
         .back { color: #8b949e; text-decoration: none; display: block; margin-top: 25px; font-size: 0.9rem; }
     </style>
 </head>
@@ -25,31 +31,41 @@
 
 <div id="app">
     <div id="menu" class="screen active">
-        <h1 style="color:white; font-weight:200;">Latvian Pro</h1>
-        <button class="btn" onclick="show('add')">Add Words</button>
-        <button class="btn btn-sec" onclick="startPractice()">Revise Words</button>
-        <div id="status" style="margin-top:20px; font-size:0.8rem; color:#444;">Connecting...</div>
+        <h1 style="color:white; font-weight:200; margin-bottom:40px;">Latvian Pro</h1>
+        <button class="btn" onclick="show('add')">Add New Words</button>
+        <button class="btn btn-sec" onclick="prepareSession('all')">Revise All Words</button>
+        <button class="btn btn-sec" onclick="prepareSession(50)">Random 50 Words</button>
+        <div id="status" style="margin-top:20px; font-size:0.8rem; color:#444;">Syncing with GitHub...</div>
     </div>
 
     <div id="add" class="screen">
-        <h3>Cloud Sync</h3>
-        <input type="password" id="gh-token" placeholder="Paste GitHub Token">
+        <h3>Database Update</h3>
+        <input type="password" id="gh-token" placeholder="GitHub Token (Saved locally)">
+        <hr style="border:0; border-top:1px solid #333; margin:20px 0;">
         <input type="text" id="eng" placeholder="English Word" autocomplete="off">
         <input type="text" id="lat" placeholder="Latvian Word" autocomplete="off">
-        <button class="btn" id="saveBtn" onclick="saveToGitHub()">Upload to GitHub</button>
-        <a href="#" class="back" onclick="location.reload()">← Back & Sync</a>
+        <button class="btn" id="saveBtn" onclick="saveToGitHub()">Upload to Cloud</button>
+        <a href="#" class="back" onclick="location.reload()">← Back & Refresh</a>
     </div>
 
     <div id="practice" class="screen">
         <div id="count" class="counter">0 / 0</div>
         <div class="flashcard">
-            <div id="lang-label" style="font-size:0.75rem; color:#8b949e; margin-bottom:15px; text-transform:uppercase;"></div>
-            <div id="main-word" class="word">...</div>
-            <div id="sub-word" class="translation"></div>
+            <div id="dir-hint" class="lang-hint"></div>
+            <div id="q-word" class="word">...</div>
+            <div id="a-word" class="translation"></div>
         </div>
-        <button id="rev-btn" class="btn" onclick="reveal()">Reveal</button>
-        <button id="next-btn" class="btn btn-sec" style="display:none" onclick="next()">Next</button>
-        <a href="#" class="back" onclick="show('menu')">Exit</a>
+        <button id="rev-btn" class="btn" onclick="reveal()">Reveal Answer</button>
+        <button id="next-btn" class="btn btn-sec" style="display:none" onclick="nextCard()">Next Word</button>
+        <a href="#" class="back" onclick="show('menu')">Stop Session</a>
+    </div>
+
+    <div id="done" class="screen">
+        <div class="flashcard">
+            <h2 style="color: var(--sec);">Pabeigts! 🎉</h2>
+            <p>Session Complete.</p>
+        </div>
+        <button class="btn" onclick="show('menu')">Home</button>
     </div>
 </div>
 
@@ -59,23 +75,22 @@
     
     let words = [], session = [], idx = 0, currentSha = "";
 
-    // Auto-load token if saved
+    // Initialization
     window.onload = () => {
-        const saved = localStorage.getItem('vocab_token');
-        if(saved) document.getElementById('gh-token').value = saved;
-        loadData();
+        const savedToken = localStorage.getItem('v_token');
+        if(savedToken) document.getElementById('gh-token').value = savedToken;
+        loadFromGitHub();
     };
 
-    async function loadData() {
+    async function loadFromGitHub() {
         try {
-            // Fetch file info (SHA and Content)
             const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${FILE}?t=${Date.now()}`);
             const data = await res.json();
             currentSha = data.sha;
             words = JSON.parse(decodeURIComponent(escape(atob(data.content))));
-            document.getElementById('status').innerText = `Database: ${words.length} words`;
+            document.getElementById('status').innerText = `Database: ${words.length} words synced`;
         } catch(e) {
-            document.getElementById('status').innerText = "Empty Database";
+            document.getElementById('status').innerText = "Empty Database - Add words to start";
         }
     }
 
@@ -89,12 +104,11 @@
         const eng = document.getElementById('eng').value.trim();
         const lat = document.getElementById('lat').value.trim();
         
-        if(!token || !eng || !lat) return alert("Missing info");
-        localStorage.setItem('vocab_token', token);
+        if(!token || !eng || !lat) return alert("Fill all fields");
+        localStorage.setItem('v_token', token);
 
         const btn = document.getElementById('saveBtn');
-        btn.innerText = "Uploading...";
-        btn.disabled = true;
+        btn.innerText = "Uploading..."; btn.disabled = true;
 
         const updated = [...words, { eng, lat }];
 
@@ -106,7 +120,7 @@
                 body: JSON.stringify({ message: "Add word", content: content, sha: currentSha })
             });
 
-            if(!res.ok) throw new Error("Sync Failed");
+            if(!res.ok) throw new Error("GitHub rejected the request. Check token permissions.");
 
             const resData = await res.json();
             currentSha = resData.content.sha;
@@ -114,45 +128,53 @@
 
             document.getElementById('eng').value = "";
             document.getElementById('lat').value = "";
-            btn.innerText = "Saved!";
-            setTimeout(() => btn.innerText = "Upload to GitHub", 2000);
+            btn.innerText = "Word Saved!";
+            setTimeout(() => btn.innerText = "Upload to Cloud", 2000);
         } catch(e) {
             alert(e.message);
-        } finally {
-            btn.disabled = false;
-        }
+        } finally { btn.disabled = false; }
     }
 
-    function startPractice() {
-        if(words.length === 0) return;
+    function prepareSession(limit) {
+        if(words.length === 0) return alert("No words to revise!");
+        
+        // 1. Shuffle all words
         session = [...words].sort(() => 0.5 - Math.random());
+        
+        // 2. Limit to 50 if requested
+        if(limit === 50) session = session.slice(0, 50);
+        
         idx = 0;
         show('practice');
-        render();
+        renderCard();
     }
 
-    function render() {
+    function renderCard() {
         const item = session[idx];
-        const isEng = Math.random() > 0.5;
+        const isEngPrompt = Math.random() > 0.5; // Random language choice
+        
         document.getElementById('count').innerText = `${idx + 1} / ${session.length}`;
-        document.getElementById('lang-label').innerText = isEng ? "English → Latvian" : "Latvian → English";
-        document.getElementById('main-word').innerText = isEng ? item.eng : item.lat;
-        document.getElementById('sub-word').innerText = "";
-        document.getElementById('sub-word').dataset.ans = isEng ? item.lat : item.eng;
+        document.getElementById('dir-hint').innerText = isEngPrompt ? "English → Latvian" : "Latvian → English";
+        document.getElementById('q-word').innerText = isEngPrompt ? item.eng : item.lat;
+        
+        document.getElementById('a-word').innerText = "";
+        document.getElementById('a-word').dataset.answer = isEngPrompt ? item.lat : item.eng;
+        
         document.getElementById('rev-btn').style.display = "block";
         document.getElementById('next-btn').style.display = "none";
     }
 
     function reveal() {
-        document.getElementById('sub-word').innerText = document.getElementById('sub-word').dataset.ans;
+        const el = document.getElementById('a-word');
+        el.innerText = el.dataset.answer;
         document.getElementById('rev-btn').style.display = "none";
         document.getElementById('next-btn').style.display = "block";
     }
 
-    function next() {
+    function nextCard() {
         idx++;
-        if(idx < session.length) render();
-        else show('menu');
+        if(idx < session.length) renderCard();
+        else show('done');
     }
 </script>
 </body>
