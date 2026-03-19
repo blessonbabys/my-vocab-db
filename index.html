@@ -142,33 +142,58 @@
     }
 
     // --- CLOUD SAVE ---
-    async function saveToGitHub() {
-        const eng = document.getElementById('eng').value.trim();
-        const lat = document.getElementById('lat').value.trim();
-        if(!eng || !lat) return alert("Fill both words");
+async function saveToGitHub() {
+    const eng = document.getElementById('eng').value.trim();
+    const lat = document.getElementById('lat').value.trim();
+    if(!eng || !lat) return alert("Fill both words");
 
-        const btn = document.getElementById('saveBtn');
-        btn.innerText = "Syncing..."; btn.disabled = true;
+    const btn = document.getElementById('saveBtn');
+    btn.innerText = "Syncing..."; 
+    btn.disabled = true;
 
-        const updated = [...words, { eng, lat }];
-        try {
-            const content = btoa(unescape(encodeURIComponent(JSON.stringify(updated, null, 2))));
-            const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${FILE}`, {
-                method: "PUT",
-                headers: { "Authorization": `token ${GITHUB_TOKEN}`, "Content-Type": "application/json" },
-                body: JSON.stringify({ message: "Add word", content: content, sha: currentSha })
-            });
-            if(!res.ok) throw new Error("GitHub error");
-            const resData = await res.json();
-            currentSha = resData.content.sha;
-            words = updated;
-            document.getElementById('eng').value = "";
-            document.getElementById('lat').value = "";
-            btn.innerText = "Saved!";
-            setTimeout(() => btn.innerText = "Save to Cloud", 2000);
-        } catch(e) { alert("Failed to save. Check your token."); } 
-        finally { btn.disabled = false; }
+    // Create the new list
+    const updated = [...words, { eng, lat }];
+
+    try {
+        // UTF-8 safe Base64 encoding
+        const jsonString = JSON.stringify(updated, null, 2);
+        const content = btoa(unescape(encodeURIComponent(jsonString)));
+
+        const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${FILE}`, {
+            method: "PUT",
+            headers: { 
+                "Authorization": `token ${GITHUB_TOKEN}`, 
+                "Accept": "application/vnd.github+json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ 
+                message: "Add word via Web App", 
+                content: content, 
+                sha: currentSha 
+            })
+        });
+
+        if(!res.ok) {
+            const errorBody = await res.json();
+            // This alert will tell us the EXACT reason (401, 403, 404, etc)
+            throw new Error(`GitHub Error ${res.status}: ${errorBody.message}`);
+        }
+
+        const resData = await res.json();
+        currentSha = resData.content.sha; // Crucial: Update SHA for the next save
+        words = updated;
+        
+        document.getElementById('eng').value = "";
+        document.getElementById('lat').value = "";
+        btn.innerText = "Saved!";
+        setTimeout(() => btn.innerText = "Save to Cloud", 2000);
+    } catch(e) { 
+        console.error(e);
+        alert(e.message); 
+    } finally { 
+        btn.disabled = false; 
     }
+}
 
     // --- REVISE LOGIC ---
     function startPractice(mode) {
