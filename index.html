@@ -35,7 +35,6 @@
             justify-content: flex-start; 
             padding: 40px 20px 20px 20px;
             box-sizing: border-box;
-            position: relative;
         }
 
         .screen { 
@@ -98,16 +97,9 @@
         
         .back { color: #8b949e; text-decoration: none; display: block; margin-top: 10px; font-size: 0.8rem; cursor: pointer; }
         hr { border: 0; border-top: 1px solid #333; margin: 10px 0; }
-        
-        /* Music Control UI */
-        #music-ctrl { position: fixed; bottom: 20px; right: 20px; z-index: 9999; background: var(--card); border: 1px solid #30363d; padding: 12px; border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.5); transition: 0.3s; }
     </style>
 </head>
 <body>
-
-<audio id="bg-music" loop>
-    <source src="https://github.com/blessonbabys/my-vocab-db/blob/main/focus.mp3?raw=true" type="audio/mpeg">
-</audio>
 
 <div id="app">
     <div id="menu" class="screen active">
@@ -140,8 +132,8 @@
 
     <div id="mode-picker" class="screen">
         <h3>Choose Mode</h3>
-        <button class="btn btn-sec" onclick="startSession('guess')">Guess (Flashcards)</button>
-        <button class="btn btn-sec" onclick="startSession('write')">Write (Typing Test)</button>
+        <button class="btn btn-sec" onclick="startSession('guess')">1st Guess (Flashcards)</button>
+        <button class="btn btn-sec" onclick="startSession('write')">2nd Write (Typing Test)</button>
         <a class="back" onclick="show('rev-menu')">Cancel</a>
     </div>
 
@@ -189,10 +181,6 @@
         </div>
         <button class="btn" onclick="show('menu')">Home</button>
     </div>
-
-    <div id="music-ctrl" onclick="toggleMusic()">
-        <span id="music-icon">🔇</span>
-    </div>
 </div>
 
 <script>
@@ -208,7 +196,7 @@
         if(savedToken) document.getElementById('gh-token').value = savedToken;
         loadFromGitHub();
         
-        // Enter-Key Submission logic
+        // Handle "Enter" key globally for the input box
         document.getElementById('user-input').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 if (document.getElementById('submit-btn').style.display !== 'none') {
@@ -219,21 +207,6 @@
             }
         });
     };
-
-    function toggleMusic() {
-        const audio = document.getElementById('bg-music');
-        const icon = document.getElementById('music-icon');
-        const ctrl = document.getElementById('music-ctrl');
-        if (audio.paused) {
-            audio.play().catch(e => alert("Tap screen first to allow audio!"));
-            icon.innerText = "🔊";
-            ctrl.style.borderColor = "var(--sec)";
-        } else {
-            audio.pause();
-            icon.innerText = "🔇";
-            ctrl.style.borderColor = "#30363d";
-        }
-    }
 
     async function loadFromGitHub() {
         try {
