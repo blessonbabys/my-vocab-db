@@ -9,7 +9,6 @@
             --bg: #0d1117; --card: #161b22; --text: #c9d1d9; --accent: #58a6ff; --sec: #3fb950; --err: #f85149; 
         }
         
-        /* Force the body to be exactly the size of the screen and no more */
         html, body { 
             margin: 0; 
             padding: 0; 
@@ -24,7 +23,7 @@
         body { 
             display: flex; 
             justify-content: center; 
-            align-items: center; 
+            align-items: flex-start; 
         }
 
         #app { 
@@ -33,12 +32,11 @@
             height: 100%; 
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            padding: 20px;
+            justify-content: flex-start; 
+            padding: 40px 20px 20px 20px;
             box-sizing: border-box;
         }
 
-        /* Each screen stays within app boundaries */
         .screen { 
             display: none; 
             animation: fadeIn 0.3s; 
@@ -59,10 +57,21 @@
         
         input { width: 100%; padding: 16px; margin-bottom: 10px; border-radius: 10px; border: 1px solid #30363d; background: #010409; color: white; font-size: 1rem; outline: none; box-sizing: border-box; }
         
-        .flashcard { background: var(--card); padding: 30px 20px; border-radius: 25px; min-height: 180px; display: flex; flex-direction: column; justify-content: center; margin: 15px 0; border: 1px solid #30363d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .word { font-size: 1.8rem; font-weight: bold; margin-bottom: 5px; }
-        .translation { font-size: 1.5rem; color: var(--sec); min-height: 25px; font-weight: 500; }
-        .counter { font-size: 0.8rem; color: #8b949e; margin-bottom: 10px; font-family: monospace; }
+        .flashcard { 
+            background: var(--card); 
+            padding: 20px; 
+            border-radius: 20px; 
+            min-height: 140px; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            margin: 10px 0; 
+            border: 1px solid #30363d; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+        }
+        .word { font-size: 1.6rem; font-weight: bold; margin-bottom: 5px; }
+        .translation { font-size: 1.3rem; color: var(--sec); min-height: 25px; font-weight: 500; }
+        .counter { font-size: 0.8rem; color: #8b949e; margin-bottom: 5px; font-family: monospace; }
         .lang-hint { font-size: 0.7rem; color: #58a6ff; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
         
         .list-container { 
@@ -71,7 +80,7 @@
             border-radius: 15px; 
             margin: 15px 0; 
             border: 1px solid #30363d; 
-            max-height: 45dvh; 
+            max-height: 40dvh; 
             overflow-y: auto; 
         }
         
@@ -82,12 +91,12 @@
         .page-btn { padding: 6px 12px; background: #21262d; border: 1px solid #30363d; color: white; border-radius: 6px; cursor: pointer; }
         .page-btn:disabled { opacity: 0.3; }
 
-        .feedback { font-weight: bold; margin: 10px 0; padding: 10px; border-radius: 8px; font-size: 0.9rem; }
+        .feedback { font-weight: bold; margin: 8px 0; padding: 8px; border-radius: 8px; font-size: 0.85rem; }
         .correct { background: rgba(63, 185, 80, 0.1); color: var(--sec); }
         .wrong { background: rgba(248, 81, 73, 0.1); color: var(--err); }
         
-        .back { color: #8b949e; text-decoration: none; display: block; margin-top: 15px; font-size: 0.85rem; cursor: pointer; }
-        hr { border: 0; border-top: 1px solid #333; margin: 15px 0; }
+        .back { color: #8b949e; text-decoration: none; display: block; margin-top: 10px; font-size: 0.8rem; cursor: pointer; }
+        hr { border: 0; border-top: 1px solid #333; margin: 10px 0; }
     </style>
 </head>
 <body>
@@ -186,6 +195,17 @@
         const savedToken = localStorage.getItem('v_token');
         if(savedToken) document.getElementById('gh-token').value = savedToken;
         loadFromGitHub();
+        
+        // Handle "Enter" key globally for the input box
+        document.getElementById('user-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                if (document.getElementById('submit-btn').style.display !== 'none') {
+                    checkWrite();
+                } else if (document.getElementById('next-btn').style.display !== 'none') {
+                    nextCard();
+                }
+            }
+        });
     };
 
     async function loadFromGitHub() {
@@ -214,7 +234,6 @@
         container.innerHTML = "";
         const start = (currentPage - 1) * perPage;
         const end = start + perPage;
-        
         const indexedWords = words.map((item, index) => ({...item, originalIndex: index})).reverse();
         const pageData = indexedWords.slice(start, end);
 
@@ -245,7 +264,6 @@
         if(!confirm("Delete this word?")) return;
         const token = document.getElementById('gh-token').value.trim();
         if(!token) return alert("Add token in 'Add Word' screen first");
-
         const updated = words.filter((_, i) => i !== index);
         await syncToGitHub(updated, "Delete word", token);
     }
