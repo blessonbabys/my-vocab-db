@@ -246,5 +246,9 @@
   {
     "eng": "Where is the entrance?",
     "lat": "Kur ir ieeja?"
+  },
+  {
+    "eng": "Where is the exit?",
+    "lat": "Kur ir izeja?"
   }
 ]
