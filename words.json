@@ -348,5 +348,10 @@
     "eng": "I need a taxi",
     "lat": "Man vajadzīgs taksometrs",
     "date": 1774009516883
+  },
+  {
+    "eng": "I need a hotel",
+    "lat": "Man vajadzīga viesnīca",
+    "date": 1774009559890
   }
 ]
