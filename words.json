@@ -82,5 +82,9 @@
   {
     "eng": "Car",
     "lat": "Mašīna"
+  },
+  {
+    "eng": "Bicycle",
+    "lat": "Velosipēds"
   }
 ]
