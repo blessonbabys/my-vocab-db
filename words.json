@@ -230,5 +230,9 @@
   {
     "eng": "Entrance",
     "lat": "Ieeja"
+  },
+  {
+    "eng": "Exit",
+    "lat": "Izeja"
   }
 ]
