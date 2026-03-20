@@ -264,5 +264,10 @@
     "eng": "Taxi",
     "lat": "Taksometrs",
     "date": 1774007520350
+  },
+  {
+    "eng": "Hotel",
+    "lat": "Viesnīca",
+    "date": 1774007551064
   }
 ]
