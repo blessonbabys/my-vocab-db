@@ -14,61 +14,90 @@
         
         .btn { background: var(--card); border: 1px solid #30363d; color: var(--accent); padding: 18px; border-radius: 12px; width: 100%; font-size: 1.1rem; margin-bottom: 12px; cursor: pointer; font-weight: 600; transition: 0.2s; }
         .btn:active { transform: scale(0.97); background: #1c2128; }
-        .btn-sec { color: var(--sec); border-color: #30363d; }
+        .btn-sec { color: var(--sec); }
         .btn-dim { color: #8b949e; font-size: 0.9rem; padding: 12px; }
         
         input { width: 100%; padding: 16px; margin-bottom: 12px; border-radius: 10px; border: 1px solid #30363d; background: #010409; color: white; font-size: 1rem; outline: none; box-sizing: border-box; }
         
-        .flashcard { background: var(--card); padding: 50px 20px; border-radius: 25px; min-height: 220px; display: flex; flex-direction: column; justify-content: center; margin: 20px 0; border: 1px solid #30363d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .word { font-size: 2.2rem; font-weight: bold; margin-bottom: 10px; }
-        .translation { font-size: 1.8rem; color: var(--sec); min-height: 40px; font-weight: 500; }
-        .counter { font-size: 0.9rem; color: #8b949e; margin-bottom: 10px; font-family: monospace; }
-        .lang-hint { font-size: 0.7rem; color: #58a6ff; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; }
+        .flashcard { background: var(--card); padding: 40px 20px; border-radius: 25px; min-height: 200px; display: flex; flex-direction: column; justify-content: center; margin: 20px 0; border: 1px solid #30363d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .word { font-size: 2rem; font-weight: bold; margin-bottom: 10px; }
+        .translation { font-size: 1.6rem; color: var(--sec); min-height: 30px; font-weight: 500; }
+        .counter { font-size: 0.8rem; color: #8b949e; margin-bottom: 10px; font-family: monospace; }
+        .lang-hint { font-size: 0.7rem; color: #58a6ff; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
         
-        /* List Styles */
-        .list-container { text-align: left; background: var(--card); border-radius: 15px; margin: 20px 0; border: 1px solid #30363d; max-height: 450px; overflow-y: auto; }
-        .list-item { padding: 12px 15px; border-bottom: 1px solid #30363d; display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; }
+        /* List & Delete Styles */
+        .list-container { text-align: left; background: var(--card); border-radius: 15px; margin: 20px 0; border: 1px solid #30363d; max-height: 400px; overflow-y: auto; }
+        .list-item { padding: 12px 15px; border-bottom: 1px solid #30363d; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
         .delete-btn { color: var(--err); background: none; border: 1px solid #442222; padding: 5px 10px; border-radius: 6px; font-size: 0.7rem; cursor: pointer; }
         
-        .pagination { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .pagination { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .page-btn { padding: 8px 12px; background: #21262d; border: 1px solid #30363d; color: white; border-radius: 6px; cursor: pointer; }
         .page-btn:disabled { opacity: 0.3; }
 
-        .back { color: #8b949e; text-decoration: none; display: block; margin-top: 25px; font-size: 0.9rem; }
+        .feedback { font-weight: bold; margin: 10px 0; padding: 10px; border-radius: 8px; }
+        .correct { background: rgba(63, 185, 80, 0.1); color: var(--sec); }
+        .wrong { background: rgba(248, 81, 73, 0.1); color: var(--err); }
+        
+        .back { color: #8b949e; text-decoration: none; display: block; margin-top: 20px; font-size: 0.9rem; cursor: pointer; }
+        hr { border: 0; border-top: 1px solid #333; margin: 20px 0; }
     </style>
 </head>
 <body>
 
 <div id="app">
     <div id="menu" class="screen active">
-        <h1 style="color:white; font-weight:200; margin-bottom:40px;">Latvian Pro</h1>
+        <h1 style="color:white; font-weight:200; margin-bottom:30px;">Latvian Pro</h1>
         <button class="btn" onclick="show('add')">Add New Words</button>
+        <button class="btn" onclick="show('rev-menu')">Revision Section</button>
         <button class="btn btn-dim" onclick="openListView()">View All Words</button>
-        <button class="btn btn-sec" onclick="prepareSession('all')">Revise All Words</button>
-        <button class="btn btn-sec" onclick="prepareSession(50)">Random 50 Words</button>
         <div id="status" style="margin-top:20px; font-size:0.8rem; color:#444;">Syncing...</div>
     </div>
 
+    <div id="rev-menu" class="screen">
+        <h3>Revision</h3>
+        <button class="btn btn-sec" onclick="pickMode('all')">Revise All Words</button>
+        <button class="btn btn-sec" onclick="pickMode(50)">Random 50 Words</button>
+        <hr>
+        <button class="btn" onclick="show('sys-rev-menu')">Systematic Revision</button>
+        <a class="back" onclick="show('menu')">← Back</a>
+    </div>
+
+    <div id="sys-rev-menu" class="screen">
+        <h3>Systematic Review</h3>
+        <button class="btn btn-dim" onclick="pickMode('sys1')">1st Review (48h)</button>
+        <button class="btn btn-dim" onclick="pickMode('sys2')">2nd Review (72-96h)</button>
+        <button class="btn btn-dim" onclick="pickMode('sys3')">3rd Review (7-8 days)</button>
+        <button class="btn btn-dim" onclick="pickMode('sys4')">4th Review (13-15 days)</button>
+        <button class="btn btn-dim" onclick="pickMode('sys5')">5th Review (28-31 days)</button>
+        <button class="btn btn-dim" onclick="pickMode('sys6')">6th Review (60-62 days)</button>
+        <a class="back" onclick="show('rev-menu')">← Back</a>
+    </div>
+
+    <div id="mode-picker" class="screen">
+        <h3>Choose Mode</h3>
+        <button class="btn btn-sec" onclick="startSession('guess')">1st Guess (Flashcards)</button>
+        <button class="btn btn-sec" onclick="startSession('write')">2nd Write (Typing Test)</button>
+        <a class="back" onclick="show('rev-menu')">Cancel</a>
+    </div>
+
     <div id="add" class="screen">
-        <h3>Database Update</h3>
-        <input type="password" id="gh-token" placeholder="GitHub Token (Saved locally)" class="token-input">
-        <hr style="border:0; border-top:1px solid #333; margin:20px 0;">
+        <h3>Add Word</h3>
+        <input type="password" id="gh-token" placeholder="GitHub Token">
         <input type="text" id="eng" placeholder="English Word" autocomplete="off">
         <input type="text" id="lat" placeholder="Latvian Word" autocomplete="off">
         <button class="btn" id="saveBtn" onclick="saveToGitHub()">Upload to Cloud</button>
-        <a href="#" class="back" onclick="location.reload()">← Back & Refresh</a>
+        <a class="back" onclick="show('menu')">← Back</a>
     </div>
 
     <div id="view" class="screen">
         <h3>Manage Dictionary</h3>
-        <input type="password" id="gh-token-list" placeholder="Paste Token to Delete" style="font-size: 0.8rem; padding: 10px;">
-        <div id="list-target" class="list-container"></div>
         <div class="pagination">
             <button class="page-btn" id="prevBtn" onclick="changePage(-1)">Prev</button>
             <span id="pageMeta" style="font-size:0.8rem;"></span>
             <button class="page-btn" id="nextBtn" onclick="changePage(1)">Next</button>
         </div>
-        <a href="#" class="back" onclick="show('menu')">← Back to Menu</a>
+        <div id="list-target" class="list-container"></div>
+        <a class="back" onclick="show('menu')">← Back</a>
     </div>
 
     <div id="practice" class="screen">
@@ -77,16 +106,21 @@
             <div id="dir-hint" class="lang-hint"></div>
             <div id="q-word" class="word">...</div>
             <div id="a-word" class="translation"></div>
+            <div id="write-zone" style="display:none">
+                <input type="text" id="user-input" placeholder="Type answer..." autocomplete="off">
+                <div id="feedback" class="feedback"></div>
+            </div>
         </div>
         <button id="rev-btn" class="btn" onclick="reveal()">Reveal Answer</button>
+        <button id="submit-btn" class="btn btn-sec" style="display:none" onclick="checkWrite()">Submit Answer</button>
         <button id="next-btn" class="btn btn-sec" style="display:none" onclick="nextCard()">Next Word</button>
-        <a href="#" class="back" onclick="show('menu')">Stop Session</a>
+        <a class="back" onclick="show('menu')">Stop</a>
     </div>
 
     <div id="done" class="screen">
         <div class="flashcard">
             <h2 style="color: var(--sec);">Pabeigts! 🎉</h2>
-            <p>Session Complete.</p>
+            <div id="summary"></div>
         </div>
         <button class="btn" onclick="show('menu')">Home</button>
     </div>
@@ -95,17 +129,14 @@
 <script>
     const REPO = "blessonbabys/my-vocab-db";
     const FILE = "words.json";
-    
     let words = [], session = [], idx = 0, currentSha = "";
+    let mistakes = [], currentMode = '', currentFilter = '';
     let currentPage = 1;
     const perPage = 100;
 
     window.onload = () => {
         const savedToken = localStorage.getItem('v_token');
-        if(savedToken) {
-            document.getElementById('gh-token').value = savedToken;
-            document.getElementById('gh-token-list').value = savedToken;
-        }
+        if(savedToken) document.getElementById('gh-token').value = savedToken;
         loadFromGitHub();
     };
 
@@ -115,10 +146,8 @@
             const data = await res.json();
             currentSha = data.sha;
             words = JSON.parse(decodeURIComponent(escape(atob(data.content))));
-            document.getElementById('status').innerText = `Database: ${words.length} words synced`;
-        } catch(e) {
-            document.getElementById('status').innerText = "Empty Database - Add words to start";
-        }
+            document.getElementById('status').innerText = `${words.length} words synced`;
+        } catch(e) { document.getElementById('status').innerText = "Sync failed"; }
     }
 
     function show(id) {
@@ -126,30 +155,29 @@
         document.getElementById(id).classList.add('active');
     }
 
+    // --- LIST MANAGEMENT ---
     function openListView() {
         currentPage = 1;
         renderList();
         show('view');
     }
 
-    // --- LIST & DELETE LOGIC ---
     function renderList() {
         const container = document.getElementById('list-target');
         container.innerHTML = "";
         const start = (currentPage - 1) * perPage;
         const end = start + perPage;
         
-        // We create a copy with the original index so we can delete correctly
-        const indexedWords = words.map((item, index) => ({...item, originalIndex: index}));
-        const pageData = indexedWords.slice().reverse().slice(start, end);
+        const indexedWords = words.map((item, index) => ({...item, originalIndex: index})).reverse();
+        const pageData = indexedWords.slice(start, end);
 
         pageData.forEach(item => {
             const div = document.createElement('div');
             div.className = "list-item";
             div.innerHTML = `
                 <div style="flex:1">
-                    <div style="color:white">${item.eng}</div>
-                    <div style="color:var(--sec); font-size:0.8rem">${item.lat}</div>
+                    <div style="color:white; font-weight:bold;">${item.eng}</div>
+                    <div style="color:var(--sec); font-size:0.8rem;">${item.lat}</div>
                 </div>
                 <button class="delete-btn" onclick="deleteWord(${item.originalIndex})">Delete</button>
             `;
@@ -167,19 +195,18 @@
     }
 
     async function deleteWord(index) {
-        const token = document.getElementById('gh-token-list').value.trim();
-        if(!token) return alert("Paste your token into the box above to delete.");
-        if(!confirm(`Delete "${words[index].eng}"?`)) return;
+        if(!confirm("Delete this word?")) return;
+        const token = document.getElementById('gh-token').value.trim();
+        if(!token) return alert("Add token in 'Add Word' screen first");
 
         const updated = words.filter((_, i) => i !== index);
-        await syncToGitHub(updated, token, "Delete word");
+        await syncToGitHub(updated, "Delete word", token);
     }
 
-    // --- SHARED SYNC FUNCTION ---
-    async function syncToGitHub(newArray, token, msg) {
+    // --- SHARED SYNC ---
+    async function syncToGitHub(updatedList, msg, token) {
         try {
-            localStorage.setItem('v_token', token);
-            const content = btoa(unescape(encodeURIComponent(JSON.stringify(newArray, null, 2))));
+            const content = btoa(unescape(encodeURIComponent(JSON.stringify(updatedList, null, 2))));
             const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${FILE}`, {
                 method: "PUT",
                 headers: { "Authorization": `token ${token}`, "Content-Type": "application/json" },
@@ -190,37 +217,36 @@
 
             const resData = await res.json();
             currentSha = resData.content.sha;
-            words = newArray;
-            renderList();
-            document.getElementById('status').innerText = `Database: ${words.length} words synced`;
-            alert("Updated successfully!");
+            words = updatedList;
+            if(document.getElementById('view').classList.contains('active')) renderList();
+            document.getElementById('status').innerText = `${words.length} words synced`;
         } catch(e) { alert(e.message); }
     }
 
-    // --- SAVE NEW WORD LOGIC ---
-    async function saveToGitHub() {
-        const token = document.getElementById('gh-token').value.trim();
-        const eng = document.getElementById('eng').value.trim();
-        const lat = document.getElementById('lat').value.trim();
-        
-        if(!token || !eng || !lat) return alert("Fill all fields");
-        const btn = document.getElementById('saveBtn');
-        btn.innerText = "Uploading..."; btn.disabled = true;
-
-        const updated = [...words, { eng, lat }];
-        await syncToGitHub(updated, token, "Add word");
-        
-        document.getElementById('eng').value = "";
-        document.getElementById('lat').value = "";
-        btn.innerText = "Upload to Cloud";
-        btn.disabled = false;
+    // --- REVISION LOGIC ---
+    function pickMode(filter) {
+        currentFilter = filter;
+        show('mode-picker');
     }
 
-    // --- PRACTICE LOGIC ---
-    function prepareSession(limit) {
-        if(words.length === 0) return alert("No words to revise!");
-        session = [...words].sort(() => 0.5 - Math.random());
-        if(limit === 50) session = session.slice(0, 50);
+    function startSession(mode) {
+        currentMode = mode;
+        mistakes = [];
+        let filtered = [...words];
+        const now = Date.now();
+        const hr = 3600000, day = 86400000;
+
+        if(currentFilter === 50) filtered = filtered.sort(() => 0.5 - Math.random()).slice(0, 50);
+        else if(currentFilter === 'sys1') filtered = words.filter(w => w.date && (now - w.date) <= (48 * hr));
+        else if(currentFilter === 'sys2') filtered = words.filter(w => w.date && (now - w.date) >= (72 * hr) && (now - w.date) <= (96 * hr));
+        else if(currentFilter === 'sys3') filtered = words.filter(w => w.date && (now - w.date) >= (7 * day) && (now - w.date) <= (8 * day));
+        else if(currentFilter === 'sys4') filtered = words.filter(w => w.date && (now - w.date) >= (13 * day) && (now - w.date) <= (15 * day));
+        else if(currentFilter === 'sys5') filtered = words.filter(w => w.date && (now - w.date) >= (28 * day) && (now - w.date) <= (31 * day));
+        else if(currentFilter === 'sys6') filtered = words.filter(w => w.date && (now - w.date) >= (60 * day) && (now - w.date) <= (62 * day));
+
+        if(filtered.length === 0) return alert("No words found for this range.");
+
+        session = filtered.sort(() => 0.5 - Math.random());
         idx = 0;
         show('practice');
         renderCard();
@@ -234,13 +260,42 @@
         document.getElementById('q-word').innerText = isEngPrompt ? item.eng : item.lat;
         document.getElementById('a-word').innerText = "";
         document.getElementById('a-word').dataset.answer = isEngPrompt ? item.lat : item.eng;
-        document.getElementById('rev-btn').style.display = "block";
+        
+        document.getElementById('feedback').innerText = "";
+        document.getElementById('user-input').value = "";
+        
+        if(currentMode === 'guess') {
+            document.getElementById('write-zone').style.display = "none";
+            document.getElementById('rev-btn').style.display = "block";
+            document.getElementById('submit-btn').style.display = "none";
+        } else {
+            document.getElementById('write-zone').style.display = "block";
+            document.getElementById('rev-btn').style.display = "none";
+            document.getElementById('submit-btn').style.display = "block";
+            setTimeout(() => document.getElementById('user-input').focus(), 200);
+        }
         document.getElementById('next-btn').style.display = "none";
     }
 
+    function checkWrite() {
+        const user = document.getElementById('user-input').value.trim().toLowerCase();
+        const correct = document.getElementById('a-word').dataset.answer.trim().toLowerCase();
+        const feedback = document.getElementById('feedback');
+        
+        if(user === correct) {
+            feedback.innerText = "Correct! ✅";
+            feedback.className = "feedback correct";
+        } else {
+            feedback.innerText = `Wrong! Answer: ${document.getElementById('a-word').dataset.answer} ❌`;
+            feedback.className = "feedback wrong";
+            mistakes.push(session[idx]);
+        }
+        document.getElementById('submit-btn').style.display = "none";
+        document.getElementById('next-btn').style.display = "block";
+    }
+
     function reveal() {
-        const el = document.getElementById('a-word');
-        el.innerText = el.dataset.answer;
+        document.getElementById('a-word').innerText = document.getElementById('a-word').dataset.answer;
         document.getElementById('rev-btn').style.display = "none";
         document.getElementById('next-btn').style.display = "block";
     }
@@ -248,7 +303,36 @@
     function nextCard() {
         idx++;
         if(idx < session.length) renderCard();
-        else show('done');
+        else {
+            show('done');
+            let html = `<p>Done!</p>`;
+            if(mistakes.length > 0) {
+                html += `<div style="text-align:left; font-size:0.8rem; overflow-y:auto; max-height:150px;"><b>Mistakes:</b><br>`;
+                mistakes.forEach(m => html += `• ${m.eng}: ${m.lat}<br>`);
+                html += `</div>`;
+            } else { html += `<p style="color:var(--sec)">Perfect Score!</p>`; }
+            document.getElementById('summary').innerHTML = html;
+        }
+    }
+
+    async function saveToGitHub() {
+        const token = document.getElementById('gh-token').value.trim();
+        const eng = document.getElementById('eng').value.trim();
+        const lat = document.getElementById('lat').value.trim();
+        if(!token || !eng || !lat) return alert("Fill all fields");
+        localStorage.setItem('v_token', token);
+
+        const btn = document.getElementById('saveBtn');
+        btn.innerText = "Saving..."; btn.disabled = true;
+
+        const updated = [...words, { eng, lat, date: Date.now() }];
+        await syncToGitHub(updated, "Add word", token);
+        
+        document.getElementById('eng').value = "";
+        document.getElementById('lat').value = "";
+        btn.innerText = "Saved!";
+        setTimeout(() => btn.innerText = "Upload to Cloud", 2000);
+        btn.disabled = false;
     }
 </script>
 </body>
