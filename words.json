@@ -182,5 +182,9 @@
   {
     "eng": "I speak english",
     "lat": "Es runāju angļu valodā"
+  },
+  {
+    "eng": "Please repeat",
+    "lat": "Lūdzu, atkārtojiet"
   }
 ]
