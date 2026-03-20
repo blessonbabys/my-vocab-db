@@ -174,5 +174,9 @@
   {
     "eng": "Do you speak spanish?",
     "lat": "Vai jūs runājat spāņu valodā?"
+  },
+  {
+    "eng": "I speak spanish",
+    "lat": "Es runāju spāņu valodā"
   }
 ]
