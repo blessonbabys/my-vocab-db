@@ -5,41 +5,89 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Latvian Pro Sync</title>
     <style>
-        :root { --bg: #0d1117; --card: #161b22; --text: #c9d1d9; --accent: #58a6ff; --sec: #3fb950; --err: #f85149; }
-        body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; min-height: 100vh; align-items: center; }
-        #app { width: 100%; max-width: 400px; text-align: center; }
-        .screen { display: none; animation: fadeIn 0.3s; }
+        :root { 
+            --bg: #0d1117; --card: #161b22; --text: #c9d1d9; --accent: #58a6ff; --sec: #3fb950; --err: #f85149; 
+        }
+        
+        /* Force the body to be exactly the size of the screen and no more */
+        html, body { 
+            margin: 0; 
+            padding: 0; 
+            width: 100%; 
+            height: 100dvh; 
+            overflow: hidden; 
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, sans-serif;
+        }
+
+        body { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+        }
+
+        #app { 
+            width: 100%; 
+            max-width: 400px; 
+            height: 100%; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Each screen stays within app boundaries */
+        .screen { 
+            display: none; 
+            animation: fadeIn 0.3s; 
+            width: 100%;
+            max-height: 100%;
+            overflow-y: auto; 
+            -webkit-overflow-scrolling: touch; 
+        }
+        
         .active { display: block; }
+        
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         
-        .btn { background: var(--card); border: 1px solid #30363d; color: var(--accent); padding: 18px; border-radius: 12px; width: 100%; font-size: 1.1rem; margin-bottom: 12px; cursor: pointer; font-weight: 600; transition: 0.2s; }
+        .btn { background: var(--card); border: 1px solid #30363d; color: var(--accent); padding: 16px; border-radius: 12px; width: 100%; font-size: 1.1rem; margin-bottom: 10px; cursor: pointer; font-weight: 600; transition: 0.2s; }
         .btn:active { transform: scale(0.97); background: #1c2128; }
         .btn-sec { color: var(--sec); }
-        .btn-dim { color: #8b949e; font-size: 0.9rem; padding: 12px; }
+        .btn-dim { color: #8b949e; font-size: 0.9rem; padding: 10px; }
         
-        input { width: 100%; padding: 16px; margin-bottom: 12px; border-radius: 10px; border: 1px solid #30363d; background: #010409; color: white; font-size: 1rem; outline: none; box-sizing: border-box; }
+        input { width: 100%; padding: 16px; margin-bottom: 10px; border-radius: 10px; border: 1px solid #30363d; background: #010409; color: white; font-size: 1rem; outline: none; box-sizing: border-box; }
         
-        .flashcard { background: var(--card); padding: 40px 20px; border-radius: 25px; min-height: 200px; display: flex; flex-direction: column; justify-content: center; margin: 20px 0; border: 1px solid #30363d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .word { font-size: 2rem; font-weight: bold; margin-bottom: 10px; }
-        .translation { font-size: 1.6rem; color: var(--sec); min-height: 30px; font-weight: 500; }
+        .flashcard { background: var(--card); padding: 30px 20px; border-radius: 25px; min-height: 180px; display: flex; flex-direction: column; justify-content: center; margin: 15px 0; border: 1px solid #30363d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .word { font-size: 1.8rem; font-weight: bold; margin-bottom: 5px; }
+        .translation { font-size: 1.5rem; color: var(--sec); min-height: 25px; font-weight: 500; }
         .counter { font-size: 0.8rem; color: #8b949e; margin-bottom: 10px; font-family: monospace; }
         .lang-hint { font-size: 0.7rem; color: #58a6ff; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
         
-        /* List & Delete Styles */
-        .list-container { text-align: left; background: var(--card); border-radius: 15px; margin: 20px 0; border: 1px solid #30363d; max-height: 400px; overflow-y: auto; }
+        .list-container { 
+            text-align: left; 
+            background: var(--card); 
+            border-radius: 15px; 
+            margin: 15px 0; 
+            border: 1px solid #30363d; 
+            max-height: 45dvh; 
+            overflow-y: auto; 
+        }
+        
         .list-item { padding: 12px 15px; border-bottom: 1px solid #30363d; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
         .delete-btn { color: var(--err); background: none; border: 1px solid #442222; padding: 5px 10px; border-radius: 6px; font-size: 0.7rem; cursor: pointer; }
         
-        .pagination { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .page-btn { padding: 8px 12px; background: #21262d; border: 1px solid #30363d; color: white; border-radius: 6px; cursor: pointer; }
+        .pagination { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+        .page-btn { padding: 6px 12px; background: #21262d; border: 1px solid #30363d; color: white; border-radius: 6px; cursor: pointer; }
         .page-btn:disabled { opacity: 0.3; }
 
-        .feedback { font-weight: bold; margin: 10px 0; padding: 10px; border-radius: 8px; }
+        .feedback { font-weight: bold; margin: 10px 0; padding: 10px; border-radius: 8px; font-size: 0.9rem; }
         .correct { background: rgba(63, 185, 80, 0.1); color: var(--sec); }
         .wrong { background: rgba(248, 81, 73, 0.1); color: var(--err); }
         
-        .back { color: #8b949e; text-decoration: none; display: block; margin-top: 20px; font-size: 0.9rem; cursor: pointer; }
-        hr { border: 0; border-top: 1px solid #333; margin: 20px 0; }
+        .back { color: #8b949e; text-decoration: none; display: block; margin-top: 15px; font-size: 0.85rem; cursor: pointer; }
+        hr { border: 0; border-top: 1px solid #333; margin: 15px 0; }
     </style>
 </head>
 <body>
@@ -75,8 +123,8 @@
 
     <div id="mode-picker" class="screen">
         <h3>Choose Mode</h3>
-        <button class="btn btn-sec" onclick="startSession('guess')">Guess (Flashcards)</button>
-        <button class="btn btn-sec" onclick="startSession('write')">Write (Typing Test)</button>
+        <button class="btn btn-sec" onclick="startSession('guess')">1st Guess (Flashcards)</button>
+        <button class="btn btn-sec" onclick="startSession('write')">2nd Write (Typing Test)</button>
         <a class="back" onclick="show('rev-menu')">Cancel</a>
     </div>
 
@@ -120,7 +168,7 @@
     <div id="done" class="screen">
         <div class="flashcard">
             <h2 style="color: var(--sec);">Pabeigts! 🎉</h2>
-            <div id="summary"></div>
+            <div id="summary" style="max-height: 200px; overflow-y: auto;"></div>
         </div>
         <button class="btn" onclick="show('menu')">Home</button>
     </div>
@@ -155,7 +203,6 @@
         document.getElementById(id).classList.add('active');
     }
 
-    // --- LIST MANAGEMENT ---
     function openListView() {
         currentPage = 1;
         renderList();
@@ -203,7 +250,6 @@
         await syncToGitHub(updated, "Delete word", token);
     }
 
-    // --- SHARED SYNC ---
     async function syncToGitHub(updatedList, msg, token) {
         try {
             const content = btoa(unescape(encodeURIComponent(JSON.stringify(updatedList, null, 2))));
@@ -212,9 +258,7 @@
                 headers: { "Authorization": `token ${token}`, "Content-Type": "application/json" },
                 body: JSON.stringify({ message: msg, content: content, sha: currentSha })
             });
-
-            if(!res.ok) throw new Error("GitHub Error. Check token.");
-
+            if(!res.ok) throw new Error("GitHub Error");
             const resData = await res.json();
             currentSha = resData.content.sha;
             words = updatedList;
@@ -223,7 +267,6 @@
         } catch(e) { alert(e.message); }
     }
 
-    // --- REVISION LOGIC ---
     function pickMode(filter) {
         currentFilter = filter;
         show('mode-picker');
@@ -260,7 +303,6 @@
         document.getElementById('q-word').innerText = isEngPrompt ? item.eng : item.lat;
         document.getElementById('a-word').innerText = "";
         document.getElementById('a-word').dataset.answer = isEngPrompt ? item.lat : item.eng;
-        
         document.getElementById('feedback').innerText = "";
         document.getElementById('user-input').value = "";
         
@@ -307,7 +349,7 @@
             show('done');
             let html = `<p>Done!</p>`;
             if(mistakes.length > 0) {
-                html += `<div style="text-align:left; font-size:0.8rem; overflow-y:auto; max-height:150px;"><b>Mistakes:</b><br>`;
+                html += `<div style="text-align:left; font-size:0.8rem;"><b>Mistakes:</b><br>`;
                 mistakes.forEach(m => html += `• ${m.eng}: ${m.lat}<br>`);
                 html += `</div>`;
             } else { html += `<p style="color:var(--sec)">Perfect Score!</p>`; }
@@ -321,15 +363,11 @@
         const lat = document.getElementById('lat').value.trim();
         if(!token || !eng || !lat) return alert("Fill all fields");
         localStorage.setItem('v_token', token);
-
         const btn = document.getElementById('saveBtn');
         btn.innerText = "Saving..."; btn.disabled = true;
-
         const updated = [...words, { eng, lat, date: Date.now() }];
         await syncToGitHub(updated, "Add word", token);
-        
-        document.getElementById('eng').value = "";
-        document.getElementById('lat').value = "";
+        document.getElementById('eng').value = ""; document.getElementById('lat').value = "";
         btn.innerText = "Saved!";
         setTimeout(() => btn.innerText = "Upload to Cloud", 2000);
         btn.disabled = false;
