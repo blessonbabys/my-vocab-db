@@ -259,5 +259,10 @@
     "eng": "Phone",
     "lat": "Telefons",
     "date": 1774007492836
+  },
+  {
+    "eng": "Taxi",
+    "lat": "Taksometrs",
+    "date": 1774007520350
   }
 ]
