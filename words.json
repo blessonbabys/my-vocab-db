@@ -1,259 +1,323 @@
 [
   {
     "eng": "hello",
-    "lat": "labdien"
+    "lat": "labdien",
+    "date": 1773748730
   },
   {
     "eng": "Thank you",
-    "lat": "Paldies"
+    "lat": "Paldies",
+    "date": 1773748730
   },
   {
     "eng": "Beautiful",
-    "lat": "Skaista"
+    "lat": "Skaista",
+    "date": 1773748730
   },
   {
     "eng": "Good night",
-    "lat": "arlabunakti"
+    "lat": "arlabunakti",
+    "date": 1773748730
   },
   {
     "eng": "How are you?",
-    "lat": "Kā tev iet?"
+    "lat": "Kā tev iet?",
+    "date": 1773748730
   },
   {
     "eng": "Goodbye",
-    "lat": "Uz redzēšanos"
+    "lat": "Uz redzēšanos",
+    "date": 1773748730
   },
   {
     "eng": "What is your name?",
-    "lat": "Kāds ir tavs vārds?"
+    "lat": "Kāds ir tavs vārds?",
+    "date": 1773748730
   },
   {
     "eng": "My name is Blesson",
-    "lat": "Mans vārds ir Blessons."
+    "lat": "Mans vārds ir Blessons.",
+    "date": 1773748730
   },
   {
     "eng": "Good morning",
-    "lat": "Labrīt"
+    "lat": "Labrīt",
+    "date": 1773748730
   },
   {
     "eng": "Very well",
-    "lat": "Ļoti labi"
+    "lat": "Ļoti labi",
+    "date": 1773748730
   },
   {
     "eng": "Mother",
-    "lat": "Māte"
+    "lat": "Māte",
+    "date": 1773748730
   },
   {
     "eng": "Sister",
-    "lat": "Māsa"
+    "lat": "Māsa",
+    "date": 1773748730
   },
   {
     "eng": "Father",
-    "lat": "Tēvs"
+    "lat": "Tēvs",
+    "date": 1773748730
   },
   {
     "eng": "Brother",
-    "lat": "Brālis"
+    "lat": "Brālis",
+    "date": 1773748730
   },
   {
     "eng": "This is my mother",
-    "lat": "Šī ir mana māte."
+    "lat": "Šī ir mana māte.",
+    "date": 1773748730
   },
   {
     "eng": "This is my sister.",
-    "lat": "Šī ir mana māsa."
+    "lat": "Šī ir mana māsa.",
+    "date": 1773748730
   },
   {
     "eng": "This is my father.",
-    "lat": "Šis ir mans tēvs."
+    "lat": "Šis ir mans tēvs.",
+    "date": 1773748730
   },
   {
     "eng": "This is my brother.",
-    "lat": "Šis is mans brālis."
+    "lat": "Šis is mans brālis.",
+    "date": 1773748730
   },
   {
     "eng": "Cat",
-    "lat": "Kaķis"
+    "lat": "Kaķis",
+    "date": 1773835130
   },
   {
     "eng": "Dog",
-    "lat": "Suns"
+    "lat": "Suns",
+    "date": 1773835130
   },
   {
     "eng": "Car",
-    "lat": "Mašīna"
+    "lat": "Mašīna",
+    "date": 1773835130
   },
   {
     "eng": "Bicycle",
-    "lat": "Velosipēds"
+    "lat": "Velosipēds",
+    "date": 1773835130
   },
   {
     "eng": "I have",
-    "lat": "Man ir"
+    "lat": "Man ir",
+    "date": 1773835130
   },
   {
     "eng": "I have dog",
-    "lat": "Man ir suns"
+    "lat": "Man ir suns",
+    "date": 1773835130
   },
   {
     "eng": "I have a cat",
-    "lat": "Man ir kaķis"
+    "lat": "Man ir kaķis",
+    "date": 1773835130
   },
   {
     "eng": "I have a car",
-    "lat": "Man ir mašīna"
+    "lat": "Man ir mašīna",
+    "date": 1773835130
   },
   {
     "eng": "I have a bicycle",
-    "lat": "Man ir velosipēds"
+    "lat": "Man ir velosipēds",
+    "date": 1773835130
   },
   {
     "eng": "Tea",
-    "lat": "Tēja"
+    "lat": "Tēja",
+    "date": 1773835130
   },
   {
     "eng": "Coffe",
-    "lat": "Kafija"
+    "lat": "Kafija",
+    "date": 1773835130
   },
   {
     "eng": "Juice",
-    "lat": "Sula"
+    "lat": "Sula",
+    "date": 1773835130
   },
   {
     "eng": "Water",
-    "lat": "Ūdens"
+    "lat": "Ūdens",
+    "date": 1773835130
   },
   {
     "eng": "I drink",
-    "lat": "Es dzeru"
+    "lat": "Es dzeru",
+    "date": 1773835130
   },
   {
     "eng": "I drink tea",
-    "lat": "Es dzeru tēju"
+    "lat": "Es dzeru tēju",
+    "date": 1773835130
   },
   {
     "eng": "I drink coffee",
-    "lat": "Es dzeru kafiju"
+    "lat": "Es dzeru kafiju",
+    "date": 1773835130
   },
   {
     "eng": "I drink water",
-    "lat": "Es dzeru ūdeni"
+    "lat": "Es dzeru ūdeni",
+    "date": 1773835130
   },
   {
     "eng": "I drink juice",
-    "lat": "Es dzeru sulu"
+    "lat": "Es dzeru sulu",
+    "date": 1773835130
   },
   {
     "eng": "No",
-    "lat": "Nē"
+    "lat": "Nē",
+    "date": 1773835130
   },
   {
     "eng": "Yes",
-    "lat": "Jā"
+    "lat": "Jā",
+    "date": 1773921533
   },
   {
     "eng": "You are welcome",
-    "lat": "Nav par ko"
+    "lat": "Nav par ko",
+    "date": 1773921533
   },
   {
     "eng": "To speak",
-    "lat": "Runāt"
+    "lat": "Runāt",
+    "date": 1773921533
   },
   {
     "eng": "Spanish (language)",
-    "lat": "Spāņu valoda"
+    "lat": "Spāņu valoda",
+    "date": 1773921533
   },
   {
     "eng": "English (language)",
-    "lat": "Angļu valoda"
+    "lat": "Angļu valoda",
+    "date": 1773921533
   },
   {
     "eng": "To repeat",
-    "lat": "Atkārtot"
+    "lat": "Atkārtot",
+    "date": 1773921533
   },
   {
     "eng": "Do you speak spanish?",
-    "lat": "Vai jūs runājat spāņu valodā?"
+    "lat": "Vai jūs runājat spāņu valodā?",
+    "date": 1773921533
   },
   {
     "eng": "I speak spanish",
-    "lat": "Es runāju spāņu valodā"
+    "lat": "Es runāju spāņu valodā",
+    "date": 1773921533
   },
   {
     "eng": "I speak english",
-    "lat": "Es runāju angļu valodā"
+    "lat": "Es runāju angļu valodā",
+    "date": 1773921533
   },
   {
     "eng": "Please repeat",
-    "lat": "Lūdzu, atkārtojiet"
+    "lat": "Lūdzu, atkārtojiet",
+    "date": 1773921533
   },
   {
     "eng": "To sit",
-    "lat": "Sēdēt"
+    "lat": "Sēdēt",
+    "date": 1773921533
   },
   {
     "eng": "Here",
-    "lat": "Šeit"
+    "lat": "Šeit",
+    "date": 1773921533
   },
   {
     "eng": "Map",
-    "lat": "Karte"
+    "lat": "Karte",
+    "date": 1773921533
   },
   {
     "eng": "To pass",
-    "lat": "Paiet garām"
+    "lat": "Paiet garām",
+    "date": 1773921533
   },
   {
     "eng": "May I sit here?",
-    "lat": "Vai es varu te sēdēt?"
+    "lat": "Vai es varu te sēdēt?",
+    "date": 1773921533
   },
   {
     "eng": "May i see your map?",
-    "lat": "Vai es varu apskatīt jūsu karti?"
+    "lat": "Vai es varu apskatīt jūsu karti?",
+    "date": 1773921533
   },
   {
     "eng": "Excuse me",
-    "lat": "Atvainojiet"
+    "lat": "Atvainojiet",
+    "date": 1773921533
   },
   {
     "eng": "Excuse me, may I pass?",
-    "lat": "Atvainojiet, vai varu paiet garām?"
+    "lat": "Atvainojiet, vai varu paiet garām?",
+    "date": 1773921533
   },
   {
     "eng": "Excuse me, can you repeat?",
-    "lat": "Atvainojiet, vai varat atkārtot?"
+    "lat": "Atvainojiet, vai varat atkārtot?",
+    "date": 1773921533
   },
   {
     "eng": "To help",
-    "lat": "Palīdzēt"
+    "lat": "Palīdzēt",
+    "date": 1773921533
   },
   {
     "eng": "Entrance",
-    "lat": "Ieeja"
+    "lat": "Ieeja",
+    "date": 1773921533
   },
   {
     "eng": "Exit",
-    "lat": "Izeja"
+    "lat": "Izeja",
+    "date": 1773921533
   },
   {
     "eng": "Lift",
-    "lat": "Lifts"
+    "lat": "Lifts",
+    "date": 1773921533
   },
   {
     "eng": "Can you help me?",
-    "lat": "Vai jūs varat man palīdzēt?"
+    "lat": "Vai jūs varat man palīdzēt?",
+    "date": 1773921533
   },
   {
     "eng": "Where is the entrance?",
-    "lat": "Kur ir ieeja?"
+    "lat": "Kur ir ieeja?",
+    "date": 1773921533
   },
   {
     "eng": "Where is the exit?",
-    "lat": "Kur ir izeja?"
+    "lat": "Kur ir izeja?",
+    "date": 1773921533
   },
   {
     "eng": "Where is the lift?",
-    "lat": "Kur ir lifts?"
+    "lat": "Kur ir lifts?",
+    "date": 1773921533
   },
   {
     "eng": "Phone",
