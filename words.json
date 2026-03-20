@@ -269,5 +269,10 @@
     "eng": "Hotel",
     "lat": "Viesnīca",
     "date": 1774007551064
+  },
+  {
+    "eng": "Ticket",
+    "lat": "Biļete",
+    "date": 1774007567682
   }
 ]
