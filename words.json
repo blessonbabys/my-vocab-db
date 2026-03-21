@@ -363,5 +363,10 @@
     "eng": "To buy",
     "lat": "Pirkt",
     "date": 1774099411988
+  },
+  {
+    "eng": "To close",
+    "lat": "Aizvērt",
+    "date": 1774099454858
   }
 ]
