@@ -378,5 +378,10 @@
     "eng": "What time do you close?",
     "lat": "Cikos jūs aizveraties?",
     "date": 1774099556005
+  },
+  {
+    "eng": "What time do you open?",
+    "lat": "Cikos jūs atveraties?",
+    "date": 1774099615971
   }
 ]
