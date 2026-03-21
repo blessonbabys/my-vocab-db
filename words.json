@@ -398,5 +398,10 @@
     "eng": "We open at ten",
     "lat": "Mēs atveramies desmitos",
     "date": 1774099797189
+  },
+  {
+    "eng": "We close at six",
+    "lat": "Mēs aizveramies sešos",
+    "date": 1774099845675
   }
 ]
