@@ -573,5 +573,10 @@
     "eng": "Country",
     "lat": "Valsts",
     "date": 1775408129226
+  },
+  {
+    "eng": "She is from Buenos Aires",
+    "lat": "Viņa ir no Buenosairesas",
+    "date": 1775408250335
   }
 ]
