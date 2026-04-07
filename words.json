@@ -628,5 +628,10 @@
     "eng": "I have a watch",
     "lat": "Man ir pulstenis",
     "date": 1775590602809
+  },
+  {
+    "eng": "I do not have a credit card",
+    "lat": "Man nav kredītkartes",
+    "date": 1775590636598
   }
 ]
