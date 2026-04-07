@@ -623,5 +623,10 @@
     "eng": "I have a passport",
     "lat": "Man ir pase",
     "date": 1775590544803
+  },
+  {
+    "eng": "I have a watch",
+    "lat": "Man ir pulstenis",
+    "date": 1775590602809
   }
 ]
