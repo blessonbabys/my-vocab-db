@@ -698,5 +698,10 @@
     "eng": "This is my mobile phone",
     "lat": "Šis ir mans mobilais telefons",
     "date": 1775673783197
+  },
+  {
+    "eng": "This is hercamera",
+    "lat": "Šis ir viņas fotoaparāts",
+    "date": 1775673826001
   }
 ]
